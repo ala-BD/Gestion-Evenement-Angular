@@ -1,0 +1,85 @@
+<div class="container py-4">
+  <h3 class="mb-3">Proposer un nouvel événement</h3>
+
+  <form [formGroup]="event" (ngSubmit)="onSubmit()" novalidate>
+    <div class="mb-3">
+      <label class="form-label">Titre</label>
+      <input class="form-control" type="text" formControlName="titre" />
+      <div class="form-text text-danger" *ngIf="getControl('titre').touched && getControl('titre').invalid">
+        <span *ngIf="getControl('titre').errors?.['required']">Titre est obligatoire.</span>
+        <span *ngIf="getControl('titre').errors?.['minlength']">Minimum 5 caractères.</span>
+        <span *ngIf="getControl('titre').errors?.['pattern']">Doit commencer par une lettre.</span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" rows="3" formControlName="description"></textarea>
+      <div class="form-text text-danger" *ngIf="getControl('description').touched && getControl('description').invalid">
+        <span *ngIf="getControl('description').errors?.['required']">Description obligatoire.</span>
+        <span *ngIf="getControl('description').errors?.['minlength']">Minimum 30 caractères.</span>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Date de l'événement</label>
+        <input class="form-control" type="date" formControlName="date" />
+        <div class="form-text text-danger" *ngIf="getControl('date').touched && getControl('date').invalid">
+          <span *ngIf="getControl('date').errors?.['required']">Date obligatoire.</span>
+          <span *ngIf="getControl('date').errors?.['futureDate']">{{ getControl('date').errors?.['futureDate'] }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Lieu</label>
+        <input class="form-control" type="text" formControlName="Lieu" />
+        <div class="form-text text-danger" *ngIf="getControl('Lieu').touched && getControl('Lieu').invalid">
+          Lieu obligatoire.
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-md-4">
+        <label class="form-label">Prix (TND)</label>
+        <input class="form-control" type="number" formControlName="prix" />
+        <div class="form-text text-danger" *ngIf="getControl('prix').touched && getControl('prix').invalid">
+          <span *ngIf="getControl('prix').errors?.['required']">Prix obligatoire.</span>
+          <span *ngIf="getControl('prix').errors?.['pattern']">Nombre valide requis.</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Nombre de places</label>
+        <input class="form-control" type="number" formControlName="nbreplaces" />
+        <div class="form-text text-danger" *ngIf="getControl('nbreplaces').touched && getControl('nbreplaces').invalid">
+          <span *ngIf="getControl('nbreplaces').errors?.['required']">Obligatoire.</span>
+          <span *ngIf="getControl('nbreplaces').errors?.['pattern']">0 à 100.</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">URL de l'image</label>
+        <input class="form-control" type="text" formControlName="imageUrl" />
+        <div class="form-text text-danger" *ngIf="getControl('imageUrl').touched && getControl('imageUrl').invalid">
+          Image obligatoire.
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <div class="d-flex align-items-center mb-2">
+        <strong class="me-2">Domaines</strong>
+        <button type="button" class="btn btn-sm btn-outline-primary" (click)="addDomain()">Ajouter</button>
+      </div>
+      <div formArrayName="domains">
+        <div class="input-group mb-2" *ngFor="let ctrl of domains.controls; let i = index">
+          <input class="form-control" [formControlName]="i" placeholder="Domaine (3 à 20 caractères)" />
+          <button type="button" class="btn btn-outline-danger" (click)="removeDomain(i)">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-3" type="submit" [disabled]="event.invalid">Ajouter</button>
+  </form>
+</div>
+
+

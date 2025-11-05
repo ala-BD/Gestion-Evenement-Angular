@@ -10,5 +10,7 @@ origanisateurId : number;
 imageUrl : string;
 nbreplaces : number;
 nbrLikes : number;
+ domains?: string[];
+ detailedAddress?: { street: string; city: string; governorate: string; zipcode: string };
 
 }
