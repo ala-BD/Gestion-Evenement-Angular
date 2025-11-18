@@ -53,6 +53,14 @@
             🎟️ Buy ticket
           </button>
 
+          <!-- Bouton Participer (navigue vers formulaire) -->
+          <a class="btn btn-sm btn-outline-primary ms-2"
+             [routerLink]="['/events','participate', event.id]"
+             [class.disabled]="isExpired(event) || event.nbreplaces === 0"
+             [attr.aria-disabled]="isExpired(event) || event.nbreplaces === 0">
+            Participer
+          </a>
+
           <!-- Message si expiré -->
           <p *ngIf="isExpired(event)" class="text-danger mt-2">
             ⚠️ Cet événement est expiré

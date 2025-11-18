@@ -68,12 +68,27 @@
     <div class="mt-3">
       <div class="d-flex align-items-center mb-2">
         <strong class="me-2">Domaines</strong>
-        <button type="button" class="btn btn-sm btn-outline-primary" (click)="addDomain()">Ajouter</button>
+        <span class="text-muted">Ajoutez un ou plusieurs domaines pour cet événement</span>
       </div>
       <div formArrayName="domains">
         <div class="input-group mb-2" *ngFor="let ctrl of domains.controls; let i = index">
           <input class="form-control" [formControlName]="i" placeholder="Domaine (3 à 20 caractères)" />
-          <button type="button" class="btn btn-outline-danger" (click)="removeDomain(i)">Supprimer</button>
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            (click)="addDomain()"
+            *ngIf="i === domains.length - 1"
+            aria-label="Ajouter un domaine">
+            +
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            (click)="removeDomain(i)"
+            [disabled]="domains.length === 1"
+            aria-label="Supprimer ce domaine">
+            &minus;
+          </button>
         </div>
       </div>
     </div>

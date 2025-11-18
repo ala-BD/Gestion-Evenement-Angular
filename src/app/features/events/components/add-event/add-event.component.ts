@@ -27,6 +27,8 @@ export class AddEventComponent {
       nbrLikes: [0],
       domains: this.formBuilder.array([])
     });
+
+    this.addDomain();
   }
 
   event!: FormGroup;
@@ -54,7 +56,9 @@ export class AddEventComponent {
     }
 
     const formValue = this.event.value;
-    const domainsArray = formValue.domains || [];
+    const domainsArray = (formValue.domains || [])
+      .map((domain: string) => (domain ?? '').trim())
+      .filter((domain: string) => domain.length > 0);
     
     // Ajouter l'événement au service
     this.eventService.addEvent({
@@ -71,8 +75,12 @@ export class AddEventComponent {
     });
 
     // Réinitialiser le formulaire
-    this.event.reset();
+    this.event.reset({
+      origanisateurId: 1,
+      nbrLikes: 0
+    });
     this.domains.clear();
+    this.addDomain();
     
     // Rediriger vers la liste des événements
     this.router.navigate(['/list']);

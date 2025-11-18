@@ -5,12 +5,14 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { EventsRoutingModule } from './events-routing.module';
 import { EventsComponent } from './events.component';
 import { AddEventComponent } from './components/add-event/add-event.component';
+import { ParticipationFormComponent } from './components/participation-form/participation-form.component';
 
 
 @NgModule({
   declarations: [
     EventsComponent,
-    AddEventComponent
+    AddEventComponent,
+    ParticipationFormComponent
   ],
   imports: [
     CommonModule,
