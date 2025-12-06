@@ -1,0 +1,68 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "titre": "Angular Summit",
+      "description": "Conférence sur Angular et l'écosystème front-end",
+      "date": "2025-11-10",
+      "Lieu": "Tunis",
+      "prix": 50,
+      "origanisateurId": 1,
+      "imageUrl": "images/event.png",
+      "nbreplaces": 25,
+      "nbrLikes": 0
+    },
+    {
+      "id": "2",
+      "titre": "Web dev days",
+      "description": "Journée dédiée aux frameworks web modernes.",
+      "date": "2025-01-05",
+      "Lieu": "Ariana",
+      "prix": 30,
+      "origanisateurId": 1,
+      "imageUrl": "images/event.png",
+      "nbreplaces": 0,
+      "nbrLikes": 0
+    },
+    {
+      "id": "3",
+      "titre": "Concert Jazz",
+      "description": "Un concert exceptionnel avec des artistes internationaux.",
+      "date": "2025-12-15T19:00:00.000Z",
+      "Lieu": "Théâtre Municipal",
+      "prix": 50,
+      "origanisateurId": 101,
+      "imageUrl": "images/event.png",
+      "nbreplaces": 0,
+      "nbrLikes": 39
+    },
+    {
+      "id": "4",
+      "titre": "Conférence Tech IA",
+      "description": "Discussion autour des dernières tendances en intelligence artificielle.",
+      "date": "2025-11-02T09:00:00",
+      "Lieu": "Centre de Congrès",
+      "prix": 0,
+      "origanisateurId": 102,
+      "imageUrl": "images/event.png",
+      "nbreplaces": 10,
+      "nbrLikes": 120
+    },
+    {
+      "id": "8dc5",
+      "titre": "testteest",
+      "description": "testttesttesttesttesttesttestsetsttteeeeeeeesttttssstttttttt",
+      "date": "2025-12-21",
+      "Lieu": "testtest",
+      "prix": 30,
+      "nbreplaces": 20,
+      "imageUrl": "testtest",
+      "origanisateurId": 1,
+      "nbrLikes": 0,
+      "domains": [
+        "dev web"
+      ]
+    }
+  ],
+  "participations": []
+}

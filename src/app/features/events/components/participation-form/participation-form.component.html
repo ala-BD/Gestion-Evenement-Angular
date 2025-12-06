@@ -1,0 +1,48 @@
+<div class="container py-4" *ngIf="event; else notFound">
+  <h3 class="mb-3">Participation à: {{ event?.titre }}</h3>
+  <div class="card">
+    <div class="card-body">
+      <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <div class="mb-3">
+          <label class="form-label">Adresse email</label>
+          <input type="email" name="emailParticipant" [(ngModel)]="model.emailParticipant" class="form-control" required email />
+          <div class="text-danger mt-1" *ngIf="(f.submitted || f.controls['emailParticipant']?.touched) && f.controls['emailParticipant']?.invalid">
+            L'adresse e-mail est obligatoire et doit être valide.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Nombre de places</label>
+          <input type="number" name="nbPlaces" [(ngModel)]="model.nbPlaces" class="form-control" required min="1" [max]="event?.nbreplaces || 0" />
+          <div class="text-danger mt-1" *ngIf="(f.submitted || f.controls['nbPlaces']?.touched) && f.controls['nbPlaces']?.errors?.['required']">
+            Le nombre de places est obligatoire.
+          </div>
+          <div class="text-danger mt-1" *ngIf="(f.submitted || f.controls['nbPlaces']?.touched) && (f.controls['nbPlaces']?.errors?.['min'] || f.controls['nbPlaces']?.errors?.['max'])">
+            Le nombre de places doit être > 0 et ne pas dépasser les places restantes ({{event?.nbreplaces}}).
+          </div>
+          <div class="mt-2" *ngIf="event && model.nbPlaces">
+            Prix total : {{ (model.nbPlaces || 0) * (event.prix || 0) }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Statut</label>
+          <select name="status" class="form-select" [(ngModel)]="model.status" required>
+            <option [ngValue]="'pending'">pending</option>
+            <option [ngValue]="'confirmed'">confirmed</option>
+            <option [ngValue]="'cancelled'">cancelled</option>
+          </select>
+        </div>
+
+        <div class="alert alert-danger" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+        <button class="btn btn-primary" type="submit" [disabled]="f.invalid">Soumettre</button>
+        <a class="btn btn-link" routerLink="/list">Annuler</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="alert alert-warning m-4">Événement introuvable.</div>
+</ng-template>

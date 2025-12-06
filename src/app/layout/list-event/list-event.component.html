@@ -1,0 +1,91 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Liste des événements</h2>
+    <a class="btn btn-outline-primary" routerLink="/events/add">Proposer un événement</a>
+  </div>
+
+  <!-- Barre de recherche (liaison avec searchText) -->
+  <input
+    type="text"
+    class="form-control mb-4"
+    placeholder="Rechercher un événement (titre ou lieu)..."
+    [(ngModel)]="searchText"
+    name="search"
+    aria-label="Recherche des événements" />
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <strong>Erreur :</strong> {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadEvents()">Réessayer</button>
+  </div>
+
+  <!-- Message de chargement -->
+  <div *ngIf="isLoading" class="alert alert-info text-center">
+    <div class="spinner-border spinner-border-sm me-2" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    Chargement des événements...
+  </div>
+
+  <!-- Message si aucun événement (sans recherche) -->
+  <div *ngIf="!isLoading && !errorMessage && !hasSearch && EVENTS.length === 0" class="alert alert-info">
+    Aucun événement disponible pour le moment.
+  </div>
+
+  <!-- Message si aucun résultat de recherche -->
+  <div *ngIf="!isLoading && !errorMessage && hasSearch && filteredEvents.length === 0" class="alert alert-warning">
+    Aucun événement trouvé pour "{{ searchText }}"
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4" *ngFor="let event of filteredEvents">
+      <div class="card h-100 shadow-sm">
+
+        <!-- Image -->
+        <img [src]="event.imageUrl"
+             class="card-img-top img-fluid"
+             style="height: 200px; object-fit: cover;"
+             [alt]="event.titre" />
+
+        <div class="card-body">
+          <!-- Infos -->
+          <h5 class="card-title">{{ event.titre }}</h5>
+          <p class="text-muted">{{ event.description }}</p>
+          <p><strong>Lieu :</strong> {{ event.Lieu }}</p>
+          <p><strong>Date :</strong> {{ event.date | date:'medium' }}</p>
+          <p><strong>Prix :</strong> {{ event.prix }} TND</p>
+          <p><strong>Organisateur :</strong> {{ event.origanisateurId }}</p>
+          <p><strong>Places restantes :</strong> {{ event.nbreplaces }}</p>
+          <p><strong>Likes :</strong> {{ event.nbrLikes }}</p>
+
+          <!-- Bouton Like (désactivé si expiré) -->
+          <button class="btn btn-sm btn-primary"
+                  (click)="incLikes(event)"
+                  [disabled]="isExpired(event)">
+            👍 Like
+          </button>
+
+          <!-- Bouton Buy (désactivé si plus de places OU expiré) -->
+          <button class="btn btn-sm btn-success ms-2"
+                  (click)="buy(event)"
+                  [disabled]="event.nbreplaces === 0 || isExpired(event)">
+            🎟️ Buy ticket
+          </button>
+
+          <!-- Bouton Participer (navigue vers formulaire) -->
+          <a class="btn btn-sm btn-outline-primary ms-2"
+             [routerLink]="['/events','participate', event.id]"
+             [class.disabled]="isExpired(event) || event.nbreplaces === 0"
+             [attr.aria-disabled]="isExpired(event) || event.nbreplaces === 0">
+            Participer
+          </a>
+
+          <!-- Message si expiré -->
+          <p *ngIf="isExpired(event)" class="text-danger mt-2">
+            ⚠️ Cet événement est expiré
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
