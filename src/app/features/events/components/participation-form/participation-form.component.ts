@@ -27,9 +27,13 @@ export class ParticipationFormComponent {
     private readonly participationService: ParticipationService,
     private readonly eventService: EventService,
   ) {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    // Utiliser getEventById() avec HttpClient
-    this.eventService.getEventById(id).subscribe({
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
+      this.errorMsg = 'ID d\'événement manquant';
+      return;
+    }
+    // Utiliser getEventById() avec HttpClient (accepte nombre ou chaîne)
+    this.eventService.getEventById(idParam).subscribe({
       next: (event) => {
         this.event = event;
         this.model.eventId = event.id;
@@ -44,28 +48,47 @@ export class ParticipationFormComponent {
   onSubmit(form: NgForm) {
     this.submitted = true;
     this.errorMsg = '';
-    if (form.invalid || !this.model.eventId || !this.model.userId) {
+    if (form.invalid || !this.model.eventId || !this.model.userId || !this.event) {
       return;
     }
 
-    this.participationService.addParticipation({
+    // Vérifier les places disponibles
+    if (this.event.nbreplaces < (this.model.nbPlaces || 1)) {
+      this.errorMsg = 'Nombre de places insuffisant';
+      return;
+    }
+
+    // Workshop: Utiliser addParticipationToBackend() pour ajouter la participation dans le backend
+    this.participationService.addParticipationToBackend({
       userId: this.model.userId!,
       eventId: this.model.eventId!,
       emailParticipant: this.model.emailParticipant!,
       nbPlaces: this.model.nbPlaces!,
       status: this.model.status as any
     }).subscribe({
-      next: (res) => {
-        if (!res.ok) {
-          this.errorMsg = res.message || 'Erreur lors de l\'inscription';
-          return;
-        }
-        // Success -> back to list
-        this.router.navigate(['/list']);
+      next: (participation) => {
+        console.log('Participation créée avec succès:', participation);
+        
+        // Mettre à jour le nombre de places de l'événement
+        this.event!.nbreplaces -= participation.nbPlaces;
+        this.eventService.updateEvent(this.event!).subscribe({
+          next: () => {
+            // Success -> rediriger vers mes participations
+            this.router.navigate(['/events/my-participations']);
+          },
+          error: (error) => {
+            console.error('Erreur lors de la mise à jour de l\'événement:', error);
+            // La participation a été créée, mais la mise à jour de l'événement a échoué
+            // Rediriger quand même vers mes participations
+            this.router.navigate(['/events/my-participations']);
+          }
+        });
       },
       error: (error) => {
         console.error('Erreur lors de l\'inscription:', error);
         this.errorMsg = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+        // Workshop: Gestion d'erreur avec alert
+        alert('Erreur lors de l\'inscription. Veuillez réessayer.');
       }
     });
   }

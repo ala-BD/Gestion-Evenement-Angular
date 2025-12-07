@@ -1,0 +1,70 @@
+<div class="container py-4">
+  <h2 class="mb-3">Mes participations</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <strong>Erreur :</strong> {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadMyParticipations()">Réessayer</button>
+  </div>
+
+  <!-- Message de chargement -->
+  <div *ngIf="isLoading" class="alert alert-info text-center">
+    <div class="spinner-border spinner-border-sm me-2" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    Chargement de vos participations...
+  </div>
+
+  <!-- Message si aucune participation -->
+  <div *ngIf="!isLoading && !errorMessage && participations.length === 0" class="alert alert-info">
+    Vous n'avez pas encore participé à un événement.
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6" *ngFor="let participation of participations">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <!-- Informations de l'événement -->
+          <h5 class="card-title" *ngIf="participation.event">
+            {{ participation.event.titre }}
+          </h5>
+          <h5 class="card-title text-muted" *ngIf="!participation.event">
+            Événement #{{ participation.eventId }}
+          </h5>
+
+          <div *ngIf="participation.event">
+            <p class="text-muted">{{ participation.event.description }}</p>
+            <p><strong>Lieu :</strong> {{ participation.event.Lieu }}</p>
+            <p><strong>Date :</strong> {{ participation.event.date | date:'medium' }}</p>
+            <p><strong>Prix unitaire :</strong> {{ participation.event.prix }} TND</p>
+          </div>
+
+          <!-- Informations de participation -->
+          <hr>
+          <p><strong>Email :</strong> {{ participation.emailParticipant }}</p>
+          <p><strong>Nombre de places :</strong> {{ participation.nbPlaces }}</p>
+          <p><strong>Prix total :</strong> 
+            <span *ngIf="participation.event">{{ participation.event.prix * participation.nbPlaces }} TND</span>
+            <span *ngIf="!participation.event">N/A</span>
+          </p>
+          <p><strong>Date d'inscription :</strong> {{ participation.registrationDate | date:'medium' }}</p>
+          
+          <!-- Statut -->
+          <p>
+            <strong>Statut :</strong>
+            <span class="badge ms-2" [ngClass]="getStatusBadgeClass(participation.status)">
+              {{ getStatusLabel(participation.status) }}
+            </span>
+          </p>
+
+          <!-- Workshop: Bouton Annuler -->
+          <button class="btn btn-sm btn-danger mt-2"
+                  (click)="cancelParticipation(participation)"
+                  [disabled]="participation.status === 'cancelled'">
+            ❌ Annuler la participation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

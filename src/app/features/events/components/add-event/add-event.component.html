@@ -1,5 +1,5 @@
 <div class="container py-4">
-  <h3 class="mb-3">Proposer un nouvel événement</h3>
+  <h3 class="mb-3">{{ isEditMode ? 'Modifier l\'événement' : 'Proposer un nouvel événement' }}</h3>
 
   <form [formGroup]="event" (ngSubmit)="onSubmit()" novalidate>
     <div class="mb-3">
@@ -93,7 +93,12 @@
       </div>
     </div>
 
-    <button class="btn btn-primary mt-3" type="submit" [disabled]="event.invalid">Ajouter</button>
+    <button class="btn btn-primary mt-3" type="submit" [disabled]="event.invalid">
+      {{ isEditMode ? 'Modifier' : 'Ajouter' }}
+    </button>
+    <button class="btn btn-secondary mt-3 ms-2" type="button" (click)="cancel()">
+      Annuler
+    </button>
   </form>
 </div>
 

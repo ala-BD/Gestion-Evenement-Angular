@@ -6,13 +6,17 @@ import { EventsRoutingModule } from './events-routing.module';
 import { EventsComponent } from './events.component';
 import { AddEventComponent } from './components/add-event/add-event.component';
 import { ParticipationFormComponent } from './components/participation-form/participation-form.component';
+import { MyEventsComponent } from './components/my-events/my-events.component';
+import { MyParticipationsComponent } from './components/my-participations/my-participations.component';
 
 
 @NgModule({
   declarations: [
     EventsComponent,
     AddEventComponent,
-    ParticipationFormComponent
+    ParticipationFormComponent,
+    MyEventsComponent,
+    MyParticipationsComponent
   ],
   imports: [
     CommonModule,

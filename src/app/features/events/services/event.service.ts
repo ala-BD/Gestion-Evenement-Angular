@@ -16,18 +16,27 @@ export class EventService {
     private errorService: ErrorService
   ) {}
 
+  // Helper pour normaliser un événement (garder l'ID tel quel - nombre ou chaîne)
+  private normalizeEvent(event: any): Event {
+    return {
+      ...event,
+      id: event.id !== undefined && event.id !== null ? event.id : 0,
+      date: event.date ? new Date(event.date) : new Date()
+    };
+  }
+
+  // Helper pour normaliser un tableau d'événements
+  private normalizeEvents(events: any[]): Event[] {
+    if (!events || !Array.isArray(events)) {
+      return [];
+    }
+    return events.map(e => this.normalizeEvent(e));
+  }
+
   // Exercice 1 - A: Récupération des données avec GET
   getAllEventsFromBackend(): Observable<Event[]> {
     return this._http.get<Event[]>(this.apiEventsUrl).pipe(
-      map((events: any[]) => {
-        if (!events || !Array.isArray(events)) {
-          return [];
-        }
-        return events.map(e => ({
-          ...e,
-          date: e.date ? new Date(e.date) : new Date()
-        }));
-      }),
+      map((events: any[]) => this.normalizeEvents(events)),
       catchError((error: HttpErrorResponse) => {
         console.error('Erreur dans getAllEventsFromBackend:', error);
         return this.errorService.handleError(error);
@@ -50,10 +59,7 @@ export class EventService {
       params: params,
       headers: headers
     }).pipe(
-      map((events: any[]) => events.map(e => ({
-        ...e,
-        date: new Date(e.date)
-      }))),
+      map((events: any[]) => this.normalizeEvents(events)),
       catchError((error: HttpErrorResponse) => this.errorService.handleError(error))
     );
   }
@@ -75,10 +81,7 @@ export class EventService {
       observe: 'response'
     }).pipe(
       map((response: HttpResponse<any[]>) => {
-        const events = response.body?.map(e => ({
-          ...e,
-          date: new Date(e.date)
-        })) || [];
+        const events = this.normalizeEvents(response.body || []);
         return new HttpResponse({
           body: events as Event[],
           headers: response.headers,
@@ -109,13 +112,10 @@ export class EventService {
     );
   }
 
-  // GET un événement par ID
-  getEventById(id: number): Observable<Event> {
+  // GET un événement par ID (accepte nombre ou chaîne)
+  getEventById(id: number | string): Observable<Event> {
     return this._http.get<Event>(`${this.apiEventsUrl}/${id}`).pipe(
-      map((event: any) => ({
-        ...event,
-        date: new Date(event.date)
-      })),
+      map((event: any) => this.normalizeEvent(event)),
       catchError((error: HttpErrorResponse) => this.errorService.handleError(error))
     );
   }
@@ -133,12 +133,32 @@ export class EventService {
     };
 
     return this._http.post<Event>(this.apiEventsUrl, eventToSend, { headers }).pipe(
-      map((newEvent: any) => ({
-        ...newEvent,
-        date: newEvent.date ? new Date(newEvent.date) : new Date()
-      })),
+      map((newEvent: any) => {
+        console.log('Réponse brute du backend:', newEvent);
+        const normalized = this.normalizeEvent(newEvent);
+        console.log('Événement normalisé:', normalized);
+        return normalized;
+      }),
       catchError((error: HttpErrorResponse) => {
         console.error('Erreur lors de la création:', error);
+        return this.errorService.handleError(error);
+      })
+    );
+  }
+
+  // Workshop: Méthode addEventToBackend() pour ajouter un événement dans le backend
+  addEventToBackend(event: Partial<Event>): Observable<Event> {
+    return this.addEvent(event);
+  }
+
+  // GET: Récupérer les événements par organizerId
+  getEventsByOrganizerId(organizerId: number): Observable<Event[]> {
+    const params = new HttpParams().set('organizerId', organizerId.toString());
+    
+    return this._http.get<Event[]>(this.apiEventsUrl, { params }).pipe(
+      map((events: any[]) => this.normalizeEvents(events)),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur dans getEventsByOrganizerId:', error);
         return this.errorService.handleError(error);
       })
     );
@@ -157,10 +177,7 @@ export class EventService {
     };
 
     return this._http.put<Event>(`${this.apiEventsUrl}/${event.id}`, eventToSend, { headers }).pipe(
-      map((updatedEvent: any) => ({
-        ...updatedEvent,
-        date: updatedEvent.date ? new Date(updatedEvent.date) : new Date()
-      })),
+      map((updatedEvent: any) => this.normalizeEvent(updatedEvent)),
       catchError((error: HttpErrorResponse) => {
         console.error('Erreur lors de la mise à jour:', error);
         return this.errorService.handleError(error);
@@ -168,8 +185,8 @@ export class EventService {
     );
   }
 
-  // DELETE: Supprimer un événement
-  deleteEvent(id: number): Observable<void> {
+  // DELETE: Supprimer un événement (accepte nombre ou chaîne)
+  deleteEvent(id: number | string): Observable<void> {
     return this._http.delete<void>(`${this.apiEventsUrl}/${id}`).pipe(
       catchError((error: HttpErrorResponse) => this.errorService.handleError(error))
     );

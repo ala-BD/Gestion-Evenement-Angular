@@ -1,7 +1,7 @@
 export class Participation {
-  id!: number;
+  id!: number | string; // Peut être un nombre ou une chaîne (comme Event.id)
   userId: number;
-  eventId: number;
+  eventId: number | string; // Peut être un nombre ou une chaîne (comme Event.id)
   emailParticipant: string;
   nbPlaces: number;
   status: 'confirmed' | 'pending' | 'cancelled';
@@ -9,7 +9,7 @@ export class Participation {
 
   constructor(
     userId: number,
-    eventId: number,
+    eventId: number | string,
     emailParticipant: string,
     nbPlaces: number,
     status: 'confirmed' | 'pending' | 'cancelled',

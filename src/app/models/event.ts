@@ -1,6 +1,6 @@
 export interface Event {
 
-id : number;
+id : number | string; // Peut être un nombre ou une chaîne (json-server peut générer les deux)
 titre : string;
 description : string;
 date : Date;

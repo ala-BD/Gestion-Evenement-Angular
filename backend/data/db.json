@@ -1,18 +1,6 @@
 {
   "events": [
     {
-      "id": "1",
-      "titre": "Angular Summit",
-      "description": "Conférence sur Angular et l'écosystème front-end",
-      "date": "2025-11-10",
-      "Lieu": "Tunis",
-      "prix": 50,
-      "origanisateurId": 1,
-      "imageUrl": "images/event.png",
-      "nbreplaces": 25,
-      "nbrLikes": 0
-    },
-    {
       "id": "2",
       "titre": "Web dev days",
       "description": "Journée dédiée aux frameworks web modernes.",
@@ -25,16 +13,19 @@
       "nbrLikes": 0
     },
     {
-      "id": "3",
       "titre": "Concert Jazz",
       "description": "Un concert exceptionnel avec des artistes internationaux.",
-      "date": "2025-12-15T19:00:00.000Z",
+      "date": "2025-12-15",
       "Lieu": "Théâtre Municipal",
       "prix": 50,
-      "origanisateurId": 101,
+      "nbreplaces": 20,
       "imageUrl": "images/event.png",
-      "nbreplaces": 0,
-      "nbrLikes": 39
+      "origanisateurId": 101,
+      "nbrLikes": 39,
+      "domains": [
+        "Musique"
+      ],
+      "id": "3"
     },
     {
       "id": "4",
@@ -49,20 +40,30 @@
       "nbrLikes": 120
     },
     {
-      "id": "8dc5",
-      "titre": "testteest",
-      "description": "testttesttesttesttesttesttestsetsttteeeeeeeesttttssstttttttt",
-      "date": "2025-12-21",
-      "Lieu": "testtest",
-      "prix": 30,
-      "nbreplaces": 20,
-      "imageUrl": "testtest",
+      "id": "68f2",
+      "titre": "Devops",
+      "description": "Un evenement pour le domaine devops contient des forlations a bas prix ",
+      "date": "2025-12-26T00:00:00.000Z",
+      "Lieu": "Nabeul",
+      "prix": 40,
+      "nbreplaces": 44,
+      "imageUrl": "images/event.png",
       "origanisateurId": 1,
-      "nbrLikes": 0,
+      "nbrLikes": 8,
       "domains": [
-        "dev web"
+        "Devops"
       ]
     }
   ],
-  "participations": []
+  "participations": [
+    {
+      "id": "8d8a",
+      "userId": 1,
+      "eventId": "68f2",
+      "emailParticipant": "ala@gmail.com",
+      "nbPlaces": 3,
+      "status": "confirmed",
+      "registrationDate": "2025-12-07T00:26:41.066Z"
+    }
+  ]
 }

@@ -1,20 +1,92 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Participation } from '../../../models/participation';
 import { EventService } from './event.service';
+import { ErrorService } from '../../shared/services/error.service';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipationService {
-  constructor(private readonly eventService: EventService) {}
+  private apiParticipationsUrl = 'http://localhost:3000/participations';
+
+  constructor(
+    private readonly eventService: EventService,
+    private readonly http: HttpClient,
+    private readonly errorService: ErrorService
+  ) {}
 
   getParticipations(): Observable<Participation[]> {
-    // Pour l'instant, retourner un tableau vide
-    // Si vous avez un backend pour les participations, utilisez HttpClient ici
-    return of([]);
+    return this.http.get<Participation[]>(this.apiParticipationsUrl).pipe(
+      map((participations: any[]) => {
+        if (!participations || !Array.isArray(participations)) {
+          return [];
+        }
+        return participations.map(p => ({
+          ...p,
+          registrationDate: p.registrationDate ? new Date(p.registrationDate) : new Date()
+        }));
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur dans getParticipations:', error);
+        return this.errorService.handleError(error);
+      })
+    );
   }
 
-  getByEventId(eventId: number): Observable<Participation[]> {
+  // Workshop: Récupérer les participations par userId
+  getParticipationsByUserId(userId: number): Observable<Participation[]> {
+    return this.http.get<Participation[]>(`${this.apiParticipationsUrl}?userId=${userId}`).pipe(
+      map((participations: any[]) => {
+        if (!participations || !Array.isArray(participations)) {
+          return [];
+        }
+        return participations.map(p => ({
+          ...p,
+          registrationDate: p.registrationDate ? new Date(p.registrationDate) : new Date()
+        }));
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur dans getParticipationsByUserId:', error);
+        return this.errorService.handleError(error);
+      })
+    );
+  }
+
+  // Workshop: Ajouter une participation dans le backend
+  addParticipationToBackend(participation: Omit<Participation, 'id' | 'registrationDate'>): Observable<Participation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    const participationToSend = {
+      ...participation,
+      registrationDate: new Date().toISOString()
+    };
+
+    return this.http.post<Participation>(this.apiParticipationsUrl, participationToSend, { headers }).pipe(
+      map((newParticipation: any) => ({
+        ...newParticipation,
+        registrationDate: newParticipation.registrationDate ? new Date(newParticipation.registrationDate) : new Date()
+      })),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur lors de la création de la participation:', error);
+        return this.errorService.handleError(error);
+      })
+    );
+  }
+
+  // Workshop: Supprimer une participation (accepte nombre ou chaîne)
+  deleteParticipation(id: number | string): Observable<void> {
+    return this.http.delete<void>(`${this.apiParticipationsUrl}/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur lors de la suppression de la participation:', error);
+        return this.errorService.handleError(error);
+      })
+    );
+  }
+
+  getByEventId(eventId: number | string): Observable<Participation[]> {
     return this.getParticipations().pipe(
       map(participations => participations.filter(p => p.eventId === eventId))
     );
